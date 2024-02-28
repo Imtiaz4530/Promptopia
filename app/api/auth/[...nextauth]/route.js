@@ -14,11 +14,21 @@ const handler = NextAuth({
 
   callbacks: {
     async session({ session }) {
+      // const sessionUser = await User.findOne({
+      //   email: session.user.email,
+      // });
+
+      // session.user.id = sessionUser._id.toString();
+
       const sessionUser = await User.findOne({
         email: session.user.email,
       });
 
-      session.user.id = sessionUser._id.toString();
+      if (sessionUser) {
+        session.user.id = sessionUser._id.toString();
+      }
+
+      return session;
     },
 
     async signIn({ profile }) {
@@ -29,7 +39,7 @@ const handler = NextAuth({
         const userExists = await User.findOne({
           email: profile.email,
         });
-
+        console.log("DB Connect hoye gelo to...", userExists);
         //if not, create new user
         if (!userExists) {
           await User.create({
